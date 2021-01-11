@@ -405,6 +405,10 @@
             this.listAccounts.AllowUserToDeleteRows = false;
             this.listAccounts.AllowUserToResizeColumns = false;
             this.listAccounts.AllowUserToResizeRows = false;
+            this.listAccounts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listAccounts.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.listAccounts.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.listAccounts.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.listAccounts.ColumnHeadersHeight = 25;
@@ -429,11 +433,13 @@
             // 
             // AccountName
             // 
+            this.AccountName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.AccountName.DataPropertyName = "AccountName";
+            this.AccountName.Frozen = true;
             this.AccountName.HeaderText = "Account";
             this.AccountName.Name = "AccountName";
             this.AccountName.ReadOnly = true;
-            this.AccountName.Width = 150;
+            this.AccountName.Width = 160;
             // 
             // AuthCode
             // 
@@ -441,7 +447,6 @@
             this.AuthCode.HeaderText = "SteamCode";
             this.AuthCode.Name = "AuthCode";
             this.AuthCode.ReadOnly = true;
-            this.AuthCode.Width = 167;
             // 
             // MainForm
             // 
