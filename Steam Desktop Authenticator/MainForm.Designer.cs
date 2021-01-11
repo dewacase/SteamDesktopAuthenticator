@@ -36,7 +36,6 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.pbTimeout = new System.Windows.Forms.ProgressBar();
             this.txtLoginToken = new System.Windows.Forms.TextBox();
-            this.listAccounts = new System.Windows.Forms.ListBox();
             this.timerSteamGuard = new System.Windows.Forms.Timer(this.components);
             this.btnTradeConfirmations = new System.Windows.Forms.Button();
             this.btnManageEncryption = new System.Windows.Forms.Button();
@@ -66,14 +65,16 @@
             this.trayQuit = new System.Windows.Forms.ToolStripMenuItem();
             this.timerTradesPopup = new System.Windows.Forms.Timer(this.components);
             this.lblStatus = new System.Windows.Forms.Label();
-            this.txtAccSearch = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.listAccounts = new System.Windows.Forms.DataGridView();
+            this.AccountName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AuthCode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.groupAccount.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.menuStripTray.SuspendLayout();
             this.panelButtons.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listAccounts)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSteamLogin
@@ -134,19 +135,6 @@
             this.txtLoginToken.Size = new System.Drawing.Size(238, 35);
             this.txtLoginToken.TabIndex = 0;
             this.txtLoginToken.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // listAccounts
-            // 
-            this.listAccounts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listAccounts.FormattingEnabled = true;
-            this.listAccounts.Location = new System.Drawing.Point(12, 217);
-            this.listAccounts.Name = "listAccounts";
-            this.listAccounts.Size = new System.Drawing.Size(310, 186);
-            this.listAccounts.TabIndex = 3;
-            this.listAccounts.SelectedValueChanged += new System.EventHandler(this.listAccounts_SelectedValueChanged);
-            this.listAccounts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listAccounts_KeyDown);
             // 
             // timerSteamGuard
             // 
@@ -398,26 +386,6 @@
             this.lblStatus.TabIndex = 11;
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // txtAccSearch
-            // 
-            this.txtAccSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtAccSearch.Location = new System.Drawing.Point(49, 411);
-            this.txtAccSearch.Name = "txtAccSearch";
-            this.txtAccSearch.Size = new System.Drawing.Size(273, 22);
-            this.txtAccSearch.TabIndex = 12;
-            this.txtAccSearch.TextChanged += new System.EventHandler(this.txtAccSearch_TextChanged);
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 416);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(36, 13);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Filter:";
-            // 
             // panelButtons
             // 
             this.panelButtons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -431,20 +399,62 @@
             this.panelButtons.TabIndex = 14;
             this.panelButtons.SizeChanged += new System.EventHandler(this.panelButtons_SizeChanged);
             // 
+            // listAccounts
+            // 
+            this.listAccounts.AllowUserToAddRows = false;
+            this.listAccounts.AllowUserToDeleteRows = false;
+            this.listAccounts.AllowUserToResizeColumns = false;
+            this.listAccounts.AllowUserToResizeRows = false;
+            this.listAccounts.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.listAccounts.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.listAccounts.ColumnHeadersHeight = 25;
+            this.listAccounts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.listAccounts.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.AccountName,
+            this.AuthCode});
+            this.listAccounts.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.listAccounts.EnableHeadersVisualStyles = false;
+            this.listAccounts.Location = new System.Drawing.Point(7, 217);
+            this.listAccounts.MultiSelect = false;
+            this.listAccounts.Name = "listAccounts";
+            this.listAccounts.ReadOnly = true;
+            this.listAccounts.RowHeadersVisible = false;
+            this.listAccounts.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.listAccounts.RowTemplate.Height = 24;
+            this.listAccounts.RowTemplate.ReadOnly = true;
+            this.listAccounts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.listAccounts.Size = new System.Drawing.Size(322, 221);
+            this.listAccounts.TabIndex = 15;
+            this.listAccounts.SelectionChanged += new System.EventHandler(this.listAccounts_SelectionChanged);
+            // 
+            // AccountName
+            // 
+            this.AccountName.DataPropertyName = "AccountName";
+            this.AccountName.HeaderText = "Account";
+            this.AccountName.Name = "AccountName";
+            this.AccountName.ReadOnly = true;
+            this.AccountName.Width = 150;
+            // 
+            // AuthCode
+            // 
+            this.AuthCode.DataPropertyName = "AuthCode";
+            this.AuthCode.HeaderText = "SteamCode";
+            this.AuthCode.Name = "AuthCode";
+            this.AuthCode.ReadOnly = true;
+            this.AuthCode.Width = 167;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnCopy;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 461);
+            this.Controls.Add(this.listAccounts);
             this.Controls.Add(this.panelButtons);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtAccSearch);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.labelUpdate);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.groupAccount);
-            this.Controls.Add(this.listAccounts);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -468,6 +478,7 @@
             this.menuStrip.PerformLayout();
             this.menuStripTray.ResumeLayout(false);
             this.panelButtons.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listAccounts)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -478,7 +489,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ProgressBar pbTimeout;
         private System.Windows.Forms.TextBox txtLoginToken;
-        private System.Windows.Forms.ListBox listAccounts;
         private System.Windows.Forms.Timer timerSteamGuard;
         private System.Windows.Forms.Button btnTradeConfirmations;
         private System.Windows.Forms.Button btnManageEncryption;
@@ -504,14 +514,15 @@
         private System.Windows.Forms.ToolStripComboBox trayAccountList;
         private System.Windows.Forms.ToolStripMenuItem menuImportAccount;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.TextBox txtAccSearch;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem menuSettings;
         private System.Windows.Forms.ToolStripMenuItem menuDeactivateAuthenticator;
         private System.Windows.Forms.ToolStripMenuItem menuRefreshSession;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.Button btnCopy;
         private System.Windows.Forms.Panel panelButtons;
+        private System.Windows.Forms.DataGridView listAccounts;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AccountName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AuthCode;
     }
 }
 

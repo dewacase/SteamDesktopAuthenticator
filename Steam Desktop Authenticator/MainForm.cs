@@ -17,6 +17,8 @@ namespace Steam_Desktop_Authenticator
     {
         private SteamGuardAccount currentAccount = null;
         private SteamGuardAccount[] allAccounts;
+        private List<SteamGuardAccount> filteredAccounts = new List<SteamGuardAccount>();
+
         private List<string> updatedSessions = new List<string>();
         private Manifest manifest;
         private static SemaphoreSlim confirmationsSemaphore = new SemaphoreSlim(1, 1);
@@ -32,6 +34,7 @@ namespace Steam_Desktop_Authenticator
         public MainForm()
         {
             InitializeComponent();
+            this.listAccounts.AutoGenerateColumns = false;
         }
 
         public void SetEncryptionKey(string key)
@@ -374,42 +377,8 @@ namespace Steam_Desktop_Authenticator
 
         private void trayAccountList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            listAccounts.SelectedIndex = trayAccountList.SelectedIndex;
+            //listAccounts.SelectedRows = trayAccountList.SelectedIndex;
         }
-
-
-        // Misc UI handlers
-        private void listAccounts_SelectedValueChanged(object sender, EventArgs e)
-        {
-            for (int i = 0; i < allAccounts.Length; i++)
-            {
-                // Check if index is out of bounds first
-                if (i < 0 || listAccounts.SelectedIndex < 0)
-                    continue;
-
-                SteamGuardAccount account = allAccounts[i];
-                if (account.AccountName == (string)listAccounts.Items[listAccounts.SelectedIndex])
-                {
-                    trayAccountList.Text = account.AccountName;
-                    currentAccount = account;
-                    loadAccountInfo();
-                    break;
-                }
-            }
-        }
-
-        private void txtAccSearch_TextChanged(object sender, EventArgs e)
-        {
-            List<string> names = new List<string>(getAllNames());
-            names = names.FindAll(new Predicate<string>(IsFilter));
-
-            listAccounts.Items.Clear();
-            listAccounts.Items.AddRange(names.ToArray());
-
-            trayAccountList.Items.Clear();
-            trayAccountList.Items.AddRange(names.ToArray());
-        }
-
 
         // Timers
 
@@ -422,6 +391,7 @@ namespace Steam_Desktop_Authenticator
             currentSteamChunk = steamTime / 30L;
             int secondsUntilChange = (int)(steamTime - (currentSteamChunk * 30L));
 
+            printAllAuthCode();
             loadAccountInfo();
             if (currentAccount != null)
             {
@@ -552,6 +522,16 @@ namespace Steam_Desktop_Authenticator
             loginForm.ShowDialog();
         }
 
+        private void printAllAuthCode()
+        {
+            for (int i = 0; i < allAccounts.Length; i++)
+            {
+                SteamGuardAccount account = allAccounts[i];
+                account.AuthCode = account.GenerateSteamGuardCodeForTime(steamTime);
+            }
+            listAccounts.Refresh();
+        }
+
         /// <summary>
         /// Load UI with the current account info, this is run every second
         /// </summary>
@@ -572,8 +552,8 @@ namespace Steam_Desktop_Authenticator
         {
             currentAccount = null;
 
-            listAccounts.Items.Clear();
-            listAccounts.SelectedIndex = -1;
+            filteredAccounts.Clear();
+            //listAccounts.SelectedIndex = -1;
 
             trayAccountList.Items.Clear();
             trayAccountList.SelectedIndex = -1;
@@ -585,80 +565,16 @@ namespace Steam_Desktop_Authenticator
                 for (int i = 0; i < allAccounts.Length; i++)
                 {
                     SteamGuardAccount account = allAccounts[i];
-                    listAccounts.Items.Add(account.AccountName);
+                    filteredAccounts.Add(account);
                     trayAccountList.Items.Add(account.AccountName);
                 }
-
-                listAccounts.SelectedIndex = 0;
+                //listAccounts.SelectedIndex = 0;
                 trayAccountList.SelectedIndex = 0;
-
-                listAccounts.Sorted = true;
                 trayAccountList.Sorted = true;
             }
             menuDeactivateAuthenticator.Enabled = btnTradeConfirmations.Enabled = allAccounts.Length > 0;
-        }
 
-        private void listAccounts_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
-                {
-                    int to = listAccounts.SelectedIndex - (e.KeyCode == Keys.Up ? 1 : -1);
-                    manifest.MoveEntry(listAccounts.SelectedIndex, to);
-                    loadAccountsList();
-                }
-                return;
-            }
-
-            if (!IsKeyAChar(e.KeyCode) && !IsKeyADigit(e.KeyCode))
-            {
-                return;
-            }
-
-            txtAccSearch.Focus();
-            txtAccSearch.Text = e.KeyCode.ToString();
-            txtAccSearch.SelectionStart = 1;
-        }
-
-        private static bool IsKeyAChar(Keys key)
-        {
-            return key >= Keys.A && key <= Keys.Z;
-        }
-
-        private static bool IsKeyADigit(Keys key)
-        {
-            return (key >= Keys.D0 && key <= Keys.D9) || (key >= Keys.NumPad0 && key <= Keys.NumPad9);
-        }
-
-        private bool IsFilter(string f)
-        {
-            if (txtAccSearch.Text.StartsWith("~"))
-            {
-                try
-                {
-                    return Regex.IsMatch(f, txtAccSearch.Text);
-                }
-                catch (Exception)
-                {
-                    return true;
-                }
-
-            }
-            else
-            {
-                return f.Contains(txtAccSearch.Text);
-            }
-        }
-
-        private string[] getAllNames()
-        {
-            string[] itemArray = new string[allAccounts.Length];
-            for (int i = 0; i < itemArray.Length; i++)
-            {
-                itemArray[i] = allAccounts[i].AccountName;
-            }
-            return itemArray;
+            listAccounts.DataSource = filteredAccounts;
         }
 
         private void loadSettings()
@@ -742,6 +658,27 @@ namespace Steam_Desktop_Authenticator
                 but.Width = panelButtons.Width / totButtons;
                 but.Location = curPos;
                 curPos = new Point(curPos.X + but.Width, 0);
+            }
+        }
+
+        private void listAccounts_SelectionChanged(object sender, EventArgs e)
+        {
+
+            for (int i = 0; i < allAccounts.Length; i++)
+            {
+                int rowIndex = listAccounts.CurrentCell.RowIndex;
+                // Check if index is out of bounds first
+                if (i < 0 || rowIndex < 0)
+                    continue;
+                SteamGuardAccount account = allAccounts[i];
+                SteamGuardAccount data = listAccounts.CurrentRow.DataBoundItem as SteamGuardAccount;
+                if (account.AccountName == data.AccountName)
+                {
+                    trayAccountList.Text = account.AccountName;
+                    currentAccount = account;
+                    loadAccountInfo();
+                    break;
+                }
             }
         }
     }
