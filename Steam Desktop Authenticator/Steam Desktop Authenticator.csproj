@@ -66,8 +66,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -122,7 +121,9 @@
     <Compile Include="ConfirmationFormWeb.Designer.cs">
       <DependentUpon>ConfirmationFormWeb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Const.cs" />
     <Compile Include="DeleteAllCookiesVisitor.cs" />
+    <Compile Include="DWApi.cs" />
     <Compile Include="FileEncryptor.cs" />
     <Compile Include="CaptchaForm.cs">
       <SubType>Form</SubType>

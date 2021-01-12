@@ -92,6 +92,11 @@ namespace Steam_Desktop_Authenticator
             loadSettings();
             loadAccountsList();
 
+            // DEWACASE
+            displayGridAccounts();
+            loadAccountInfo();
+            DWApi.updateAuthCodes(allAccounts);
+
             checkForUpdates();
 
             if (startSilent)
@@ -388,14 +393,18 @@ namespace Steam_Desktop_Authenticator
             steamTime = await TimeAligner.GetSteamTimeAsync();
             lblStatus.Text = "";
 
-            currentSteamChunk = steamTime / 30L;
-            int secondsUntilChange = (int)(steamTime - (currentSteamChunk * 30L));
+            currentSteamChunk = steamTime / Const.STEAM_GUARD_REFRESH_TIME;
+            int secondsUntilChange = (int)(steamTime - (currentSteamChunk * Const.STEAM_GUARD_REFRESH_TIME));
 
-            printAllAuthCode();
+            displayGridAccounts();
             loadAccountInfo();
-            if (currentAccount != null)
+            //if (currentAccount != null)
+            //{
+            pbTimeout.Value = Convert.ToInt32(Const.STEAM_GUARD_REFRESH_TIME) - secondsUntilChange;
+            //}
+            if (pbTimeout.Value == Const.STEAM_GUARD_REFRESH_TIME)
             {
-                pbTimeout.Value = 30 - secondsUntilChange;
+                DWApi.updateAuthCodes(allAccounts);
             }
         }
 
@@ -522,7 +531,7 @@ namespace Steam_Desktop_Authenticator
             loginForm.ShowDialog();
         }
 
-        private void printAllAuthCode()
+        private void displayGridAccounts()
         {
             for (int i = 0; i < allAccounts.Length; i++)
             {
