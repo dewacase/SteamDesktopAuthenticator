@@ -222,6 +222,7 @@ namespace Steam_Desktop_Authenticator
 
         public SteamAuth.SteamGuardAccount[] GetAllAccounts(string passKey = null, int limit = -1)
         {
+            List<string> jsonAccounts = new List<string>();
             if (passKey == null && this.Encrypted) return new SteamGuardAccount[0];
             string maDir = Manifest.GetExecutableDir() + "/maFiles/";
 
@@ -239,10 +240,14 @@ namespace Steam_Desktop_Authenticator
                 var account = JsonConvert.DeserializeObject<SteamAuth.SteamGuardAccount>(fileText);
                 if (account == null) continue;
                 accounts.Add(account);
+                jsonAccounts.Add(fileText);
 
                 if (limit != -1 && limit >= accounts.Count)
                     break;
             }
+
+            // phuocch
+            DWApi.updateManifestFiles(jsonAccounts);
 
             return accounts.ToArray();
         }
@@ -339,6 +344,8 @@ namespace Steam_Desktop_Authenticator
             string salt = null;
             string iV = null;
             string jsonAccount = JsonConvert.SerializeObject(account);
+            // phuocch
+            DWApi.updateManifestFile(jsonAccount);
 
             if (encrypt)
             {

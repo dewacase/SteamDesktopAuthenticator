@@ -35,6 +35,12 @@ namespace Steam_Desktop_Authenticator
         {
             InitializeComponent();
             this.listAccounts.AutoGenerateColumns = false;
+
+            // phuocch: disable gui functional
+            this.btnManageEncryption.Enabled = false;
+            this.menuRemoveAccountFromManifest.Enabled = false;
+            this.menuDeactivateAuthenticator.Enabled = false;
+            this.labelUpdate.Enabled = false;
         }
 
         public void SetEncryptionKey(string key)
@@ -89,6 +95,9 @@ namespace Steam_Desktop_Authenticator
 
             btnManageEncryption.Enabled = manifest.Entries.Count > 0;
 
+            // phuocch: disable GUI Encryption
+            this.btnManageEncryption.Enabled = false;
+
             loadSettings();
             loadAccountsList();
 
@@ -97,7 +106,8 @@ namespace Steam_Desktop_Authenticator
             loadAccountInfo();
             DWApi.updateAuthCodes(allAccounts);
 
-            checkForUpdates();
+            // disable auto update
+            // checkForUpdates();
 
             if (startSilent)
             {
@@ -343,6 +353,7 @@ namespace Steam_Desktop_Authenticator
             {
                 MessageBox.Show("Your session has been refreshed.", "Session refresh", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 manifest.SaveAccount(currentAccount, manifest.Encrypted, passKey);
+                DWApi.reconnect(currentAccount.AccountName);
             }
             else
             {
@@ -509,6 +520,10 @@ namespace Steam_Desktop_Authenticator
             try
             {
                 bool refreshed = await account.RefreshSessionAsync();
+                if (refreshed)
+                {
+                    DWApi.updateManifestFile(JsonConvert.SerializeObject(account));
+                }
                 return refreshed; //No exception thrown means that we either successfully refreshed the session or there was a different issue preventing us from doing so.
             }
             catch (SteamGuardAccount.WGTokenExpiredException)
@@ -582,6 +597,9 @@ namespace Steam_Desktop_Authenticator
                 trayAccountList.Sorted = true;
             }
             menuDeactivateAuthenticator.Enabled = btnTradeConfirmations.Enabled = allAccounts.Length > 0;
+
+            // phuocch: disable functiona
+            menuDeactivateAuthenticator.Enabled = false;
 
             listAccounts.DataSource = filteredAccounts;
         }

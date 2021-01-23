@@ -99,6 +99,7 @@ namespace Steam_Desktop_Authenticator
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             browser.Load(steamAccount.GenerateConfirmationURL());
+            Console.WriteLine("------------"+ steamAccount.GenerateConfirmationURL());
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
